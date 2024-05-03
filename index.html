@@ -13,6 +13,12 @@
       rel="stylesheet"
     />
 
+    <!-- alpine js -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
     <!--  icons  -->
     <script src="https://unpkg.com/feather-icons"></script>
 
@@ -21,32 +27,113 @@
   <body>
     <!-- navigation bar start -->
 
-    <nav class="navbar">
+    <nav class="navbar" x-data>
       <a href="#" class="navbar-logo">asma<span>bakery</span>.</a>
 
       <div class="navbar-nav">
         <a href="#">home</a>
         <a href="#about">about us</a>
         <a href="#menu-items">menu</a>
+        <a href="#products">product</a>
         <a href="#contact">contact</a>
       </div>
 
       <div class="navbar-extra">
-        <a href="#" id="search"><i data-feather="search"></i></a>
-        <a href="#" id="shopping-cart"><i data-feather="shopping-cart"></i></a>
-        <a href="#" id="menu"><i data-feather="menu"></i></a>
+        <a href="#" id="search-button"><i data-feather="search"></i></a>
+        <a href="#" id="shopping-cart-button">
+          <i data-feather="shopping-cart"></i>
+          <span
+            class="quantity-badge"
+            x-show="$store.cart.quantity"
+            x-text="$store.cart.quantity"
+          ></span>
+        </a>
+        <a href="#" id="menu-button"><i data-feather="menu"></i></a>
       </div>
+
+      <!-- search form start -->
+      <div class="search-form">
+        <input type="search" id="search-box" placeholder="search here..." />
+        <label for="search-box"><i data-feather="search"></i></label>
+      </div>
+      <!-- search form end -->
+
+      <!-- shopping cart start -->
+      <div class="shopping-cart">
+        <template x-for="(items, index) in $store.cart.items" x-key="index">
+          <div class="cart-item">
+            <img :src="`img/products/${items.img}`" :alt="items.name" />
+            <div class="item-detail">
+              <h3 x-text="items.name"></h3>
+              <div class="item-price">
+                <span x-text="rupiah(items.price)"></span> &times;
+                <button id="remove" @click="$store.cart.remove(items.id)">
+                  &minus;
+                </button>
+                <span x-text="items.quantity"></span>
+                <button id="add" @click="$store.cart.add(items)">&plus;</button>
+                &equals;
+                <span x-text="items.total"></span>
+              </div>
+            </div>
+          </div>
+        </template>
+        <h4 x-show="!$store.cart.items.length" style="margin-top: 1rem">
+          Cart is Empty
+        </h4>
+        <h4 x-show="$store.cart.items.length">
+          Total : <span x-text="rupiah($store.cart.total)"></span>
+        </h4>
+
+        <div class="form-container" x-show="$store.cart.items.length">
+          <form action="" id="checkoutForm">
+            <input
+              type="hidden"
+              name="items"
+              x-model="JSON.stringify($store.cart.items)"
+            />
+            <input type="hidden" name="total" x-model="$store.cart.total" />
+            <h5>Customer Detail</h5>
+
+            <label for="name">
+              <span>Name</span>
+              <input type="text" name="name" id="name" />
+            </label>
+
+            <label for="email">
+              <span>Email</span>
+              <input type="text" name="email" id="email" />
+            </label>
+
+            <label for="phone">
+              <span>Phone</span>
+              <input type="number" name="phone" id="phone" autocomplete="off" />
+            </label>
+
+            <button
+              class="checkout-button disabled"
+              type="submit"
+              id="checkoutButton"
+              value="checkout"
+            >
+              Checkout
+            </button>
+          </form>
+        </div>
+      </div>
+      <!-- shopping cart end -->
     </nav>
+
     <!-- navigation bar end  -->
+
     <!-- hero start -->
     <section class="hero" id="home">
       <main class="content">
-        <h1>Various Homemade <span>Bakery</span> & <span>Cookies</span></h1>
+        <h1>Various Homemade <span>Bakery</span>.</h1>
         <p>
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis,
           fuga.
         </p>
-        <a href="#" class="cta">Buy now!</a>
       </main>
     </section>
     <!-- hero end -->
@@ -75,7 +162,7 @@
     </section>
     <!-- about end -->
 
-    <!-- about start -->
+    <!-- menu start -->
     <section id="menu-items" class="menu-items">
       <h2>Our<span>Menu</span></h2>
       <p>
@@ -91,7 +178,7 @@
             alt="Cookies"
           />
           <h3 class="menu-card-tittle">- Cookies -</h3>
-          <p class="menu-card-price">IDR 90.000</p>
+          <p class="menu-card-price">IDR 90K</p>
         </div>
         <div class="menu-card">
           <img
@@ -100,7 +187,7 @@
             alt="Cookies"
           />
           <h3 class="menu-card-tittle">- Cookies -</h3>
-          <p class="menu-card-price">IDR 90.000</p>
+          <p class="menu-card-price">IDR 90K</p>
         </div>
         <div class="menu-card">
           <img
@@ -109,7 +196,7 @@
             alt="Cookies"
           />
           <h3 class="menu-card-tittle">- Cookies -</h3>
-          <p class="menu-card-price">IDR 90.000</p>
+          <p class="menu-card-price">IDR 90K</p>
         </div>
         <div class="menu-card">
           <img
@@ -118,7 +205,7 @@
             alt="Cookies"
           />
           <h3 class="menu-card-tittle">- Cookies -</h3>
-          <p class="menu-card-price">IDR 90.000</p>
+          <p class="menu-card-price">IDR 90K</p>
         </div>
         <div class="menu-card">
           <img
@@ -127,7 +214,7 @@
             alt="Cookies"
           />
           <h3 class="menu-card-tittle">- Cookies -</h3>
-          <p class="menu-card-price">IDR 90.000</p>
+          <p class="menu-card-price">IDR 90K</p>
         </div>
         <div class="menu-card">
           <img
@@ -140,7 +227,54 @@
         </div>
       </div>
     </section>
-    <!-- about end -->
+    <!-- menu end -->
+
+    <!-- product start -->
+    <section class="products" id="products" x-data="products">
+      <h2>Our<span>Product</span></h2>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo unde eum,
+        ab fuga possimus iste.
+      </p>
+
+      <div class="row">
+        <template x-for="(items, index) in items" x-key="index">
+          <div class="product-card">
+            <div class="product-icons">
+              <a href="#" class="item-detail-button">
+                <svg class="feather">
+                  <use href="src/icons/feather-sprite.svg#eye" />
+                </svg>
+              </a>
+              <a href="#" @click.prevent="$store.cart.add(items)">
+                <svg class="feather">
+                  <use href="src/icons/feather-sprite.svg#shopping-cart" />
+                </svg>
+              </a>
+            </div>
+            <div class="product-image">
+              <img :src="`img/products/${items.img}`" :alt="items.name" />
+            </div>
+            <div class="product-content">
+              <h3 x-text="items.name"></h3>
+              <div class="product-stars">
+                <svg class="feather">
+                  <use href="src/icons/feather-sprite.svg#star" />
+                </svg>
+                <svg class="feather">
+                  <use href="src/icons/feather-sprite.svg#star" />
+                </svg>
+                <svg class="feather">
+                  <use href="src/icons/feather-sprite.svg#star" />
+                </svg>
+              </div>
+              <div class="product-price" x-text="rupiah(items.price)"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+    <!-- products end -->
 
     <!-- contact start -->
     <section id="contact" class="contact">
@@ -200,11 +334,45 @@
 
     <!-- footer end -->
 
+    <!-- modal box item detail start -->
+    <div class="modal" id="item-detail-modal">
+      <div class="modal-container">
+        <a href="#" class="close-icon"><i data-feather="x"></i></a>
+        <div class="modal-content">
+          <img src="img/products/product_1.jpg" alt="Product 1" />
+          <div class="product-content">
+            <h3>Product 1</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
+              earum corrupti excepturi dolores consequuntur reiciendis cum,
+              molestiae repellendus, voluptates ex ipsum a soluta adipisci
+              expedita?
+            </p>
+            <div class="product-stars">
+              <i data-feather="star" class="star-full"></i>
+              <i data-feather="star" class="star-full"></i>
+              <i data-feather="star" class="star-full"></i>
+              <i data-feather="star" class="star-full"></i>
+              <i data-feather="star"></i>
+            </div>
+            <div class="product-price">IDR 30K <span>IDR 55K</span></div>
+            <a href="#"
+              ><i data-feather="shopping-cart"></i> <span>add to cart</span></a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- modal box item detail end -->
+
     <!-- fonts -->
     <script>
       feather.replace();
     </script>
 
     <script src="js/script.js"></script>
+
+    <!-- app js -->
+    <script src="js/app.js" async></script>
   </body>
 </html>
